@@ -137,4 +137,7 @@ pip-selfcheck.json
 !.vscode/extensions.json
 
 
+### Project Specific
+chewy.csv
+
 # End of https://www.gitignore.io/api/python,visualstudiocode

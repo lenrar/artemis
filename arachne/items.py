@@ -11,6 +11,8 @@ import scrapy
 class PetFood(scrapy.Item):
     # define the fields for your item here like:
     name = scrapy.Field()
+    animal_type = scrapy.Field()
+    food_type = scrapy.Field()
     weight = scrapy.Field()
     cans = scrapy.Field()
     url = scrapy.Field()

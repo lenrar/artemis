@@ -8,7 +8,7 @@ from datetime import datetime
 from scrapy.utils.project import get_project_settings
 
 def crawl_chewy():
-    print("Scraping chewy.com, this may take a few minutes...")
+    print("Crawling chewy.com, this may take a few minutes...")
     process = CrawlerProcess(get_project_settings())
     process.crawl(ChewySpider)
     process.start()
@@ -30,20 +30,24 @@ def main():
             print("Can not proceed.")
             quit()
 
+    pet = input("What type of pet do you have (cat/dog)? ").lower()
     budget = float(re.findall(numeric, input("What is your monthly budget in dollars? "))[0])
-    consumption = float(re.findall(numeric, input("How many ounces of food does your cat eat a day? "))[0])
+    consumption = float(re.findall(numeric, input("How many ounces of food does your %s eat a day? " % pet))[0])
 
     df = pd.read_csv(data_path)
+    df = df[df['animal_type'].str.lower() == pet]
     df['monthly_cost'] = df['price_per_oz'] * consumption * 30
     affordable_food = df[df.monthly_cost <= budget]
     if(len(affordable_food) > 0):
         best_food =  affordable_food.loc[affordable_food['score'].idxmax()]
-        print("The best food for your cat is:")
-        print(best_food['name'])
-        print(best_food['url'])
+        print("The best food for your %s is:" % pet)
+        print()
+        print("Name:", best_food['name'])
+        print("Monthly Cost: $ %.2f" % (best_food['monthly_cost']))
+        print("URL:", best_food['url'])
     else:
         cheapest = df.loc[df['monthly_cost'].idxmin()]['monthly_cost']
-        print("There are no foods in your price range. The cheapest food for your cat is $ %.2f a month." % (cheapest))
+        print("There are no foods in your price range. The cheapest food for your %s is $ %.2f a month." % (pet, cheapest))
 
   
 if __name__== "__main__":

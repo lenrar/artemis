@@ -12,7 +12,10 @@ class ChewySpider(CrawlSpider):
     name = 'chewy'
     allowed_domains = ['chewy.com']
     start_urls = [
-        'https://www.chewy.com/b/wet-food-389/' # Wet Cat Food
+        'https://www.chewy.com/b/wet-food-389/', # Wet Cat Food
+        # 'https://www.chewy.com/b/dry-food-388/', # Dry Cat Food
+        'https://www.chewy.com/b/wet-food-293/', # Wet Dog Food
+        # 'https://www.chewy.com/b/dry-food-294/'  # Dry Dog Food
     ]
 
     rules = (
@@ -79,6 +82,8 @@ class ChewySpider(CrawlSpider):
         # ID
         item['price'] = float(response.css(".ga-eec__price::text").extract_first().strip()[1:])
         item['price_per_oz'] = item['price'] / (item['cans'] * item['weight'])
+        item['animal_type'] = response.css('body > main > nav > ul > li:nth-child(1) > a > span::text').extract_first()
+        item['food_type'] = response.css('body > main > nav > ul > li:nth-child(3) > a > span::text').extract_first()
         item['url'] = response.url
 
         return item

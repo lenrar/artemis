@@ -139,5 +139,6 @@ pip-selfcheck.json
 
 ### Project Specific
 chewy.csv
+.vscode/
 
 # End of https://www.gitignore.io/api/python,visualstudiocode

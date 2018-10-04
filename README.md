@@ -1,4 +1,5 @@
-# artemis
+# artemis <img src="artemis.png"  width="10%" height="10%">
+
 ## description
 artemis is a pet food optimizer tool. given a budget, pet type, and pet food consumption it will output the highest quality food for your pet.
 

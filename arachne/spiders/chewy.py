@@ -13,9 +13,9 @@ class ChewySpider(CrawlSpider):
     allowed_domains = ['chewy.com']
     start_urls = [
         'https://www.chewy.com/b/wet-food-389/', # Wet Cat Food
-        # 'https://www.chewy.com/b/dry-food-388/', # Dry Cat Food
+        'https://www.chewy.com/b/dry-food-388/', # Dry Cat Food
         'https://www.chewy.com/b/wet-food-293/', # Wet Dog Food
-        # 'https://www.chewy.com/b/dry-food-294/'  # Dry Dog Food
+        'https://www.chewy.com/b/dry-food-294/'  # Dry Dog Food
     ]
 
     rules = (
@@ -51,12 +51,23 @@ class ChewySpider(CrawlSpider):
         # SERVING
         if(serving_selector == None):
             # No selector for size, can be found in title
-            item['weight'] = float(re.findall(numeric, title[1].strip())[0])
-            item['cans'] = int(re.findall(numeric, title[2].strip())[0])
+            weight_str = title[1].strip()
+            item['weight'] = float(re.findall(numeric, weight_str)[0])
+
+            if('lb' in weight_str):
+                item['weight'] *= 16 # convert to oz
+                item['cans'] = 1 # If the measurement is pounds, assume one bag of food
+            else:
+                item['cans'] = int(re.findall(numeric, title[2].strip())[0])
         else:
             serving = serving_selector.split(',')
-            item['weight'] = float(re.findall(numeric, serving[0].strip())[0])
-            item['cans'] = int(re.findall(numeric, serving[1].strip())[0])
+            weight_str = serving[0].strip()
+            item['weight'] = float(re.findall(numeric, weight_str)[0])
+            if('lb' in weight_str):
+                item['weight'] *= 16 # convert to oz
+                item['cans'] = 1 # If the measurement is pounds, assume one bag of food
+            else:
+                item['cans'] = int(re.findall(numeric, serving[1].strip())[0])
 
         # NUTRITION
         nutrition = [tuple(row.css('td::text').extract()) for row in  response.css('#Nutritional-Info > section.cw-tabs__content--right > div > table > tbody > tr')]

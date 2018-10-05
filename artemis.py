@@ -30,12 +30,14 @@ def main():
             print("Can not proceed.")
             quit()
 
-    pet = input("What type of pet do you have (cat/dog)? ").lower()
+    pet = input("What type of pet do you have (cat/dog)? ").strip().lower()
+    food_type = input("What type of food are you looking for (dry/wet)? ").strip().lower()
     budget = float(re.findall(numeric, input("What is your monthly budget in dollars? "))[0])
     consumption = float(re.findall(numeric, input("How many ounces of food does your %s eat a day? " % pet))[0])
 
     df = pd.read_csv(data_path)
     df = df[df['animal_type'].str.lower() == pet]
+    df = df[df['food_type'].str.lower() == food_type + " food"]
     df['monthly_cost'] = df['price_per_oz'] * consumption * 30
     affordable_food = df[df.monthly_cost <= budget]
     if(len(affordable_food) > 0):

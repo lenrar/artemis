@@ -30,15 +30,29 @@ def main():
             print("Can not proceed.")
             quit()
 
+    df = pd.read_csv(data_path)
+
     pet = input("What type of pet do you have (cat/dog)? ").strip().lower()
+    df = df[df['animal_type'].str.lower() == pet]
+
     food_type = input("What type of food are you looking for (dry/wet)? ").strip().lower()
+    df = df[df['food_type'].str.contains(food_type, case=False)]
+
+    name_filter = input("Provide a comma separated list of filters for the name or press enter for no name filtering. ").strip().lower()
+    if(name_filter != ''):
+        filters = [re.escape(f.strip()) for f in name_filter.split(',')]
+        pattern = '|'.join(filters)
+        df = df[df['name'].str.contains(pattern, case=False)]
+
+    if(len(df) == 0):
+        print('No %s food found for %ss containing \'%s\'.' % (food_type, pet, name_filter))
+        quit()
+
     budget = float(re.findall(numeric, input("What is your monthly budget in dollars? "))[0])
     consumption = float(re.findall(numeric, input("How many ounces of food does your %s eat a day? " % pet))[0])
-
-    df = pd.read_csv(data_path)
-    df = df[df['animal_type'].str.lower() == pet]
-    df = df[df['food_type'].str.lower() == food_type + " food"]
     df['monthly_cost'] = df['price_per_oz'] * consumption * 30
+
+
     affordable_food = df[df.monthly_cost <= budget]
     if(len(affordable_food) > 0):
         best_food =  affordable_food.loc[affordable_food['score'].idxmax()]
@@ -48,8 +62,12 @@ def main():
         print("Monthly Cost: $ %.2f" % (best_food['monthly_cost']))
         print("URL:", best_food['url'])
     else:
-        cheapest = df.loc[df['monthly_cost'].idxmin()]['monthly_cost']
-        print("There are no foods in your price range. The cheapest food for your %s is $ %.2f a month." % (pet, cheapest))
+        cheapest = df.loc[df['monthly_cost'].idxmin()]
+        print("There are no foods in your price range. The cheapest %s food for your %s is:" % (food_type, pet))
+        print()
+        print("Name:", cheapest['name'])
+        print("Monthly Cost: $ %.2f" % (cheapest['monthly_cost']))
+        print("URL:", cheapest['url'])
 
   
 if __name__== "__main__":

@@ -6,6 +6,8 @@ Artemis is a pet food optimizer tool. given a budget, pet type, and pet food con
 Highest quality in this case means max protein, minimal carbs, and fat as close to 20% as possible. this isn't meant to be used very seriously.
 
 ## Setup
+*Requires latest anaconda and python*
+
 To run, clone and then create a new anaconda environment with `conda env create -f environment.yml`, then, activate the environment with:
 
 * windows: `activate artemis-env`
